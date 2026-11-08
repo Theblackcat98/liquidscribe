@@ -1,0 +1,6 @@
+{
+  "dialect": "postgresql",
+  "schema": "./src/db/schema.ts",
+  "out": "./drizzle",
+  "dbCredentials": { "url": "postgresql://postgres:scribe@127.0.0.1:5433/liquidscribe" }
+}
