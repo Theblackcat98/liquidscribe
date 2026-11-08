@@ -63,8 +63,13 @@ export const DocumentEditor = forwardRef<DocumentEditorHandle, Props>(function D
       if (!empty && !current.state.doc.nodeAt(from)?.isAtom) pendingRange.current = { from, to };
     },
     onCreate: ({ editor: current }) => {
-      callbacks.current.onEditorReady(current);
-      callbacks.current.onSuggestionCount(countSuggestions(current));
+      // Tiptap creates the instance during render; calling setState straight from
+      // here is dropped ("state update on a component that hasn't mounted yet")
+      // and the editor stays blank until the next remount. Defer one frame.
+      requestAnimationFrame(() => {
+        callbacks.current.onEditorReady(current);
+        callbacks.current.onSuggestionCount(countSuggestions(current));
+      });
     },
   });
 
