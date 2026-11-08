@@ -15,7 +15,7 @@ type Props = { initialNotes: Note[]; initialFolders: FolderType[] };
 type DialogState = { type: "search" | "folder" | "history" | "link" | "move" | "shortcuts" } | { type: "settings"; tab: string } | { type: "delete"; id: string } | null;
 const CACHE_KEY = "liquidscribe:workspace:v1";
 const defaultPreferences: Preferences = { fontSize: 17, serif: true, wide: false, showWordCount: true };
-const defaultRuntime: RuntimeStatus = { available: false, models: [], model: "llama3.2", endpoint: "http://127.0.0.1:11434" };
+const defaultRuntime: RuntimeStatus = { available: false, models: [], model: "local-model", endpoint: "http://127.0.0.1:8080" };
 
 function readStored<T>(key: string, fallback: T): T {
   try { const value = localStorage.getItem(key); return value ? JSON.parse(value) as T : fallback; } catch { return fallback; }

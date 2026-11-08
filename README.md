@@ -17,7 +17,7 @@ A complete note-taking app — folders, search, version history, export, printin
   Nothing is rewritten in bulk.
 - **Built-in writing tools.** Tighten, summarise, expand, remove, explain and
   word-count work with no model at all, so the app is useful on a fresh clone.
-- **Local model, optionally.** Point it at Ollama (`OLLAMA_BASE_URL`) and the
+- **Local model, optionally.** Point it at a llama.cpp server (`LLAMA_BASE_URL`) and the
   same actions run through your own model. Nothing is sent anywhere else.
 - **Visual + voice input.** Camera or screen capture attaches to a message;
   voice uses the browser speech service and never leaves the tab.
@@ -30,7 +30,7 @@ A complete note-taking app — folders, search, version history, export, printin
 | Editor | Tiptap 3 + `tiptap-markdown`, custom suggestion node |
 | Data | Postgres via Drizzle ORM (`notes`, `folders`) |
 | Styling | Tailwind v4 entry point + hand-written CSS layers |
-| Assistant | `/api/assistant` → built-in tools or an Ollama endpoint |
+| Assistant | `/api/assistant` → built-in tools or a llama.cpp server |
 
 ## Run it
 
@@ -50,8 +50,8 @@ npm run dev                     # http://localhost:3000
 Optional local model:
 
 ```bash
-ollama serve
-ollama pull llama3.2            # or set OLLAMA_MODEL to something you have
+llama-server -m ./models/your-model.gguf --port 8080
+# vision-capable model, e.g.:  llama-server -hf ggml-org/gemma-3-4b-it-GGUF
 ```
 
 The app checks `GET /api/assistant` at boot and shows the model in the
@@ -63,8 +63,8 @@ badge reads "Writing tools".
 | Variable | Default | Purpose |
 | --- | --- | --- |
 | `DATABASE_URL` | — (required) | Postgres connection string |
-| `OLLAMA_BASE_URL` | `http://127.0.0.1:11434` | Local model server |
-| `OLLAMA_MODEL` | `llama3.2` | Preferred model name |
+| `LLAMA_BASE_URL` | `http://127.0.0.1:8080` | llama.cpp server endpoint |
+| `LLAMA_MODEL` | first model served | Preferred model id (as reported by `/v1/models`) |
 
 ## Design
 
