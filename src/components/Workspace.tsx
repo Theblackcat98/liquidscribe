@@ -30,6 +30,12 @@ function exportMarkdown(content: string) {
   return content.replace(/<ai-suggestion\b[^>]*data-original="([^"]*)"[^>]*><\/ai-suggestion>/g, (_, text: string) => text.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&#10;/g, "\n").replace(/&amp;/g, "&"));
 }
 
+function safeMarkdownFilename(title: string) {
+  const stem = title.trim().replace(/[<>:"\/\\|?*\u0000-\u001f\u007f]/g, "-").replace(/[. ]+$/g, "") || "Untitled note";
+  const safeStem = /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(stem) ? `_${stem}` : stem;
+  return `${safeStem}.md`;
+}
+
 export function Workspace({ initialNotes, initialFolders }: Props) {
   const [notes, setNotes] = useState(initialNotes);
   const [folders, setFolders] = useState(initialFolders);
@@ -211,7 +217,13 @@ export function Workspace({ initialNotes, initialFolders }: Props) {
     try { const response = await fetch("/api/assistant"); const status: RuntimeStatus = await response.json(); setRuntime(status); if (!status.available) setModel(""); else if (!model || !status.models.includes(model)) setModel(status.model); }
     catch { notice("Couldn’t check the local runtime. Your writing tools are still available."); }
   };
-  const exportNote = () => { if (!activeNote) return; flushEditor(); downloadFile(`${activeNote.title || "Untitled note"}.md`, `# ${activeNote.title}\n\n${exportMarkdown(activeNote.content)}\n`, "text/markdown;charset=utf-8"); setDocumentMenu(false); notice("Your Markdown file is ready."); };
+  const exportNote = () => {
+    flushEditor();
+    const note = notesRef.current.find((item) => item.id === activeRef.current) || notesRef.current[0];
+    if (!note) return;
+    downloadFile(safeMarkdownFilename(note.title), `# ${note.title}\n\n${exportMarkdown(note.content)}\n`, "text/markdown;charset=utf-8");
+    setDocumentMenu(false); notice("Your Markdown file is ready.");
+  };
   const exportWorkspace = () => { flushEditor(); downloadFile(`LiquidScribe-workspace-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify({ app: "LiquidScribe", version: 1, exportedAt: new Date().toISOString(), notes: notesRef.current, folders }, null, 2), "application/json"); notice("Your workspace backup has been downloaded."); };
   const deleteNote = (id: string) => {
     updateNote(id, { deleted: true }); setDialog(null); setDocumentMenu(false);
