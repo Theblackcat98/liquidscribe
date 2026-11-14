@@ -85,10 +85,11 @@ source mode, export (`.md` / workspace `.json`), print, focus mode, outline,
 voice input, camera capture, inline suggestions with accept/reject/undo.
 
 Verified on this commit: `npm run build` succeeds, `npx tsc --noEmit` is clean,
-`npx eslint .` reports **0 errors** (13 warnings, all the "latest callback in a
-ref" idiom the scaffold uses — those two rules are set to `warn` in
-`eslint.config.mjs` with a note). `npm run smoke` drives the main flows with
-Playwright against a running server.
+`npx eslint .` reports **0 errors and 13 warnings**: 9 `react-hooks/refs`, 2
+`react-hooks/set-state-in-effect`, 1 `react-hooks/exhaustive-deps`, and 1
+`@next/next/no-img-element`. Only the first two rules are set to `warn` in
+`eslint.config.mjs`; the last two warnings are separate findings. `npm run smoke`
+drives the main flows with Playwright against a running server.
 
 Fonts: DM Sans and Lora are bundled under the SIL Open Font License (see
 `public/fonts/*.txt`).
