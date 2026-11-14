@@ -37,7 +37,7 @@ export function Sidebar(props: Props) {
           {open ? <FolderOpen size={16} className={`folder-icon ${folder.color}`} /> : <Folder size={16} className={`folder-icon ${folder.color}`} />}<span>{folder.name}</span><small>{folderCount(folder.id)}</small>
         </button>
       </div>
-      {open && <div className="folder-children">{children.map((child) => renderFolder(child, depth + 1))}{!children.length && folderNotes.map((note) => noteRow(note, true))}</div>}
+      {open && <div className="folder-children">{children.map((child) => renderFolder(child, depth + 1))}{folderNotes.map((note) => noteRow(note, true))}</div>}
     </div>;
   };
 
